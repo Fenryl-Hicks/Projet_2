@@ -1,4 +1,5 @@
-﻿using P2FixAnAppDotNetCode.Models.Repositories;
+﻿using System.Collections.Generic;
+using P2FixAnAppDotNetCode.Models.Repositories;
 
 namespace P2FixAnAppDotNetCode.Models.Services
 {
@@ -19,10 +20,9 @@ namespace P2FixAnAppDotNetCode.Models.Services
         /// <summary>
         /// Get all product from the inventory
         /// </summary>
-        public Product[] GetAllProducts()
+        public List<Product> GetAllProducts()
         {
-            // TODO change the return type from array to List<T> and propagate the change
-            // throughout the application
+            // Conversion du tableau en List<T>
             return _productRepository.GetAllProducts();
         }
 
@@ -31,8 +31,19 @@ namespace P2FixAnAppDotNetCode.Models.Services
         /// </summary>
         public Product GetProductById(int id)
         {
-            // TODO implement the method
-            return null;
+            // On utilise GetAllProducts() pour récupérer tous les produits
+            List<Product> products = GetAllProducts();
+
+            // Recherche du produit par l'id
+            foreach (var product in products)
+            {
+                if (product.Id == id)
+                {
+                    return product; // On retourne le produit dès qu'on le trouve
+                }
+            }
+
+            return null; // Aucun produit trouvé on retourne null
         }
 
         /// <summary>
@@ -40,8 +51,25 @@ namespace P2FixAnAppDotNetCode.Models.Services
         /// </summary>
         public void UpdateProductQuantities(Cart cart)
         {
-            // TODO implement the method
-            // update product inventory by using _productRepository.UpdateProductStocks() method.
+            if (cart == null)
+            {
+                return; // Sécurité si le panier est null
+            }
+
+            // Récupération de la liste de tous les produits depuis le repository
+            List<Product> products = GetAllProducts();
+
+            // Pour chaque ligne du panier, on met à jour le stock du produit correspondant
+            foreach (var cartLine in cart.Lines)
+            {
+                foreach (var product in products)
+                {
+                    if (product.Id == cartLine.Product.Id)
+                    {
+                        _productRepository.UpdateProductStocks(product.Id, cartLine.Quantity); // On arrête la recherche pour le produit trouvé
+                    }
+                }
+            }
         }
     }
 }

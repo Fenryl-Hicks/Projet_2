@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using P2FixAnAppDotNetCode.Models;
+using System.Collections.Generic;
 using P2FixAnAppDotNetCode.Models.Services;
 
 namespace P2FixAnAppDotNetCode.Controllers
@@ -17,7 +18,7 @@ namespace P2FixAnAppDotNetCode.Controllers
 
         public IActionResult Index()
         {
-            Product[] products = _productService.GetAllProducts();
+            List<Product> products = _productService.GetAllProducts();
             return View(products);
         }
     }
