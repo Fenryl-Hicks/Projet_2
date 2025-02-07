@@ -21,7 +21,17 @@ namespace P2FixAnAppDotNetCode.Models
         /// </summary>//
         public void AddItem(Product product, int quantity)
         {
-            // TODO implement the method
+            foreach (var line in cartLines)
+            {
+                if (line.Product.Id == product.Id)
+                {
+                    line.Quantity += quantity;
+                    return; // Produit trouvé, quantité mise à jour
+                }
+            }
+
+            // Si il n'y a pas de produit, on le rajoute
+            cartLines.Add(new CartLine { Product = product, Quantity = quantity });
         }
 
         /// <summary>
@@ -44,8 +54,21 @@ namespace P2FixAnAppDotNetCode.Models
         /// </summary>
         public double GetAverageValue()
         {
-            // TODO implement the method
-            return 0.0;
+            if (cartLines.Count == 0)
+                return 0.0;
+
+            double totalValue = GetTotalValue();
+            int totalQuantity = 0;
+
+            foreach (var line in cartLines)
+            {
+                totalQuantity += line.Quantity;
+            }
+
+            if (totalQuantity > 0)
+                return totalValue / totalQuantity;
+            else
+                return 0.0;
         }
 
         /// <summary>
@@ -53,8 +76,14 @@ namespace P2FixAnAppDotNetCode.Models
         /// </summary>
         public Product FindProductInCartLines(int productId)
         {
-            // TODO implement the method
-            return null;
+            foreach (var line in cartLines)
+            {
+                if (line.Product.Id == productId)
+                {
+                    return line.Product;
+                }
+            }
+            return null; // Produit non trouvé 
         }
 
         /// <summary>
